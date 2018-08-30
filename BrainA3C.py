@@ -13,7 +13,7 @@ sys.path.append("game/")
 import wrapped_flappy_bird as game
 
 N_WORKERS = multiprocessing.cpu_count()
-MAX_GLOBAL_EP = 65000
+MAX_GLOBAL_EP = 20000
 GLOBAL_NET_SCOPE = 'Global_Net'
 UPDATE_GLOBAL_ITER = 10
 GAMMA = 0.9

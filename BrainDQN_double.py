@@ -1,9 +1,3 @@
-# -----------------------------
-# File: Deep Q-Learning Algorithm
-# Author: Flood Sung
-# Date: 2016.3.21
-# -----------------------------
-
 import tensorflow as tf 
 import numpy as np 
 import random
@@ -14,10 +8,10 @@ from tensor_train import TensorTrain
 # Hyper Parameters:
 FRAME_PER_ACTION = 1
 GAMMA = 0.99 # decay rate of past observations
-OBSERVE = 100. # timesteps to observe before training
+OBSERVE = 10000. # timesteps to observe before training
 EXPLORE = 200000. # frames over which to anneal epsilon
 FINAL_EPSILON = 0#0.001 # final value of epsilon
-INITIAL_EPSILON = 0.1#0.01 # starting value of epsilon
+INITIAL_EPSILON = 0#0.01 # starting value of epsilon
 REPLAY_MEMORY = 50000 # number of previous transitions to remember
 BATCH_SIZE = 32 # size of minibatch
 UPDATE_TIME = 100
@@ -148,6 +142,9 @@ class BrainDQN:
 	def setPerception(self,nextObservation,action,reward,terminal):
 		#newState = np.append(nextObservation,self.currentState[:,:,1:],axis = 2)
 		newState = np.append(self.currentState[:,:,1:],nextObservation,axis = 2)
+		tmp = np.zeros(2)
+		tmp[action] = 1
+		action = tmp
 		self.replayMemory.append((self.currentState,action,reward,newState,terminal))
 		if len(self.replayMemory) > REPLAY_MEMORY:
 			self.replayMemory.popleft()
@@ -165,30 +162,27 @@ class BrainDQN:
 				state = "train"
 			
 			print("TIMESTEP", self.timeStep, "/ STATE", state, \
-				"/ TIME", Time, "/ ACTION", np.array(action).nonzero()[0][0], "/COST", self.loss)
+				"/ TIME", Time, "/ ACTION", action, "/COST", self.loss)
 
 		self.currentState = newState
 		self.timeStep += 1
 
 	def getAction(self):
-                QValue = self.QValue.eval(feed_dict= {self.stateInput:[self.currentState]})[0]
-                action = np.zeros(self.actions)
-                action_index = 0
-                if self.timeStep % FRAME_PER_ACTION == 0:
-                        if random.random() <= self.epsilon:
-                                action_index = random.randrange(self.actions)
-                                action[action_index] = 1
-                        else:
-                                action_index = np.argmax(QValue)
-                                action[action_index] = 1
-                else:
-                        action[0] = 1 # do nothing
-
-                # change episilon
-                if self.epsilon > FINAL_EPSILON and self.timeStep > OBSERVE:
-                        self.epsilon -= (INITIAL_EPSILON - FINAL_EPSILON)/EXPLORE
-
-                return action
+		QValue = self.QValue.eval(feed_dict= {self.stateInput:[self.currentState]})[0]
+		action = 0
+		if self.timeStep % FRAME_PER_ACTION == 0:
+			if random.random() <= self.epsilon:
+				action_index = random.randrange(self.actions)
+				action = action_index
+			else:
+				action_index = np.argmax(QValue)
+				action = action_index
+		else:
+			action = 0 # do nothing
+		# change episilon
+		if self.epsilon > FINAL_EPSILON and self.timeStep > OBSERVE:
+			self.epsilon -= (INITIAL_EPSILON - FINAL_EPSILON)/EXPLORE
+		return action
 
 	def setInitState(self,observation):
 		self.currentState = np.stack((observation, observation, observation, observation), axis = 2)

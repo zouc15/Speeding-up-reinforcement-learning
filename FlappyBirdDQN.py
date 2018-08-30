@@ -2,13 +2,13 @@ import cv2
 import sys
 sys.path.append("game/")
 import wrapped_flappy_bird as game
-from BrainDQN_Nature import BrainDQN
+#from BrainDQN_Nature import BrainDQN
 #from BrainDQN_Nature_FTT import BrainDQN
 #from BrainDQN_Nature_CTT import BrainDQN
 #from BrainDQN_double import BrainDQN
 #from BrainDQN_Nature_TT import BrainDQN
 #from BrainDQN_doublePER import BrainDQN
-#from BrainDQN_doublePERdueling import BrainDQN
+from BrainDQN_doublePERdueling import BrainDQN
 #from BrainDQN_Nature_CP import BrainDQN
 
 import numpy as np
@@ -39,11 +39,11 @@ def playFlappyBird():
 	# Step 3.2: run the game
 	timestep=0
 	start1=time.time()
-	while timestep <= 10000 and time.time()-start1 <= 6000:
+	while timestep <= 60000 and time.time()-start1 <= 100000:
 		start = time.time()
 		action = brain.getAction()
 		nextObservation,reward,terminal,score = flappyBird.frame_step(action)
-		if score != 'n':
+		if score != 'n' and timestep>10000:
 			SCORE.append(score)
 		nextObservation = preprocess(nextObservation)
 		brain.setPerception(nextObservation,action,reward,terminal)

@@ -1,9 +1,3 @@
-# -----------------------------
-# File: Deep Q-Learning Algorithm
-# Author: Flood Sung
-# Date: 2016.3.21
-# -----------------------------
-
 import tensorflow as tf 
 import numpy as np 
 import random
@@ -14,7 +8,7 @@ from tensor_train import TensorTrain
 # Hyper Parameters:
 FRAME_PER_ACTION = 1
 GAMMA = 0.99 # decay rate of past observations
-OBSERVE = 100. # timesteps to observe before training
+OBSERVE = 10000. # timesteps to observe before training
 EXPLORE = 200000. # frames over which to anneal epsilon
 FINAL_EPSILON = 0#0.001 # final value of epsilon
 INITIAL_EPSILON = 0.1#0.01 # starting value of epsilon

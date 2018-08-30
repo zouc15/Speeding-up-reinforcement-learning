@@ -56,7 +56,7 @@ class PPONet(object):
 		self.a_loss = -tf.reduce_mean(tf.minimum(surr, tf.clip_by_value(ratio, 1. - EPLISON, 1. + EPLISON) * self.adv))
 		self.a_train = tf.train.AdamOptimizer(LR_A).minimize(self.a_loss)
 
-		saver = tf.train.Saver()
+		self.saver = tf.train.Saver()
 		self.SESS.run(tf.global_variables_initializer())
 		checkpoint = tf.train.get_checkpoint_state("saved_networks")
 		if checkpoint and checkpoint.model_checkpoint_path:
@@ -207,8 +207,8 @@ class Worker(object):
 						break
 
 			sys.stdout.write("Time:"+str(time.time()-start)+"/ Work_Name:"+self.name+"/ TIMESTEP:"+str(GLOBAL_EP)+"/ ACTION:"+str(a)+"/ ACTION_Prob:"+str(a_prob)+'\n')
-			if GLOBAL_EP % 2000 == 0:
-				saver.save(self.ppo.SESS, 'saved_networks/' + 'network', global_step = GLOBAL_EP)
+			if GLOBAL_EP % 1000 == 0:
+				self.ppo.saver.save(self.ppo.SESS, 'saved_networks/' + 'network', global_step = GLOBAL_EP)
 			GLOBAL_EP += 1
 
 
