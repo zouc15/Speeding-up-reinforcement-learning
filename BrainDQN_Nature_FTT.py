@@ -1,9 +1,3 @@
-# -----------------------------
-# File: Deep Q-Learning Algorithm
-# Author: Flood Sung
-# Date: 2016.3.21
-# -----------------------------
-
 import tensorflow as tf 
 import numpy as np 
 import random
